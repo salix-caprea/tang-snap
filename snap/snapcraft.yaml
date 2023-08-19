@@ -1,0 +1,73 @@
+name: tang
+base: core22
+version: '14-0.1'
+summary: Tang binding daemon
+license: GPL-3.0-or-later
+description: |
+  Tang is a server for binding data to network presence.
+  
+  This is the reference server (https://github.com/latchset/tang) packaged as a snap container.
+  
+  Due to current limitations, the daemon is configured as a standard service in listening mode with privileges dropped to the special `snap_daemon` user/group. This restricts the server port to 1024 or above. Without further configuration **the default port is 8080**.
+  
+assumes: [snapd2.45,common-data-dir,snap-env,command-chain]
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+system-usernames:
+  snap_daemon: shared
+
+parts:
+  part-scripts:
+    plugin: dump
+    source: snap/local/scripts
+    organize:
+      '*.sh': usr/libexec/
+    
+  part-tang:
+    plugin: meson
+    meson-parameters:
+      - '--prefix=/usr'
+      - '-Duser=snap_daemon'
+      - '-Dgroup=snap_daemon'
+    source: https://github.com/latchset/tang.git
+    source-tag: v14
+    build-packages:
+      - gcc
+      - meson
+      - ninja-build
+      - pkgconf
+      - libhttp-parser-dev
+      - systemd
+      - jose
+      - libjose-dev
+      - curl # for tests only
+      - iproute2 # ss; for tests only
+      - socat # for tests only
+    build-snaps: []
+    override-build: |
+      craftctl default
+      meson test
+    stage-packages:
+      - jose
+      - libhttp-parser2.9
+      - util-linux # setpriv
+    stage-snaps: []
+    
+apps:
+  tangd:
+    daemon: simple
+    command-chain:
+      # Set perms while root, before starting service
+      - usr/libexec/set-perms.sh
+    environment:
+      # TODO: use configuration (see https://snapcraft.io/docs/adding-snap-configuration)
+      HTTP_PORT: 8080
+      JWK_DIR: $SNAP_COMMON/db
+    command: usr/libexec/tangd-wrapper.sh
+    plugs:
+      - network
+      - network-bind
+ 
+ # TODO: add utilities
