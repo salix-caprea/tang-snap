@@ -9,7 +9,10 @@ description: |
   This is the reference server (https://github.com/latchset/tang) packaged as a snap container.
   
   Due to current limitations, the daemon is configured as a standard service in listening mode with privileges dropped to the special `snap_daemon` user/group. This restricts the server port to 1024 or above. Without further configuration **the default port is 8080**.
-  
+
+contact: https://github.com/salix-caprea
+issues: https://github.com/salix-caprea/tang-snap/issues
+source-code: https://github.com/salix-caprea/tang-snap
 assumes: [snapd2.45,common-data-dir,snap-env,command-chain]
 
 grade: devel # must be 'stable' to release into candidate/stable channels
