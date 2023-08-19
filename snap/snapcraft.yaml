@@ -22,11 +22,15 @@ system-usernames:
   snap_daemon: shared
 
 parts:
-  part-scripts:
+  part-hooks:
     plugin: dump
-    source: snap/local/scripts
+    source: src/hooks
     organize:
-      '*.sh': usr/libexec/
+      bin/: snap/hooks/
+
+  part-utilities:
+    plugin: dump
+    source: src/utilities
     
   part-tang:
     plugin: meson
@@ -63,12 +67,12 @@ apps:
     daemon: simple
     command-chain:
       # Set perms while root, before starting service
-      - usr/libexec/set-perms.sh
+      - bin/set-perms
     environment:
       # TODO: use configuration (see https://snapcraft.io/docs/adding-snap-configuration)
       HTTP_PORT: 8080
       JWK_DIR: $SNAP_COMMON/db
-    command: usr/libexec/tangd-wrapper.sh
+    command: bin/tangd-wrapper
     plugs:
       - network
       - network-bind
