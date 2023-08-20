@@ -18,6 +18,28 @@
 
 . "$SNAP/bin/configure-utilities"
 
-export HTTP_PORT="$(get_http_port)"
-
-setpriv --clear-groups --reuid snap_daemon --regid snap_daemon -- $SNAP/usr/libexec/tangd -p $HTTP_PORT -l $JWK_DIR
+handle_port_config() {
+  if ! has_http_port_changed ; then
+    return 0;
+  fi
+  
+  http_port="$(get_http_port)"
+  
+  # Validate port number
+  case $http_port in
+    (*[!0-9]*|'')
+      echo "HTTP port '$http_port' is not a valid integer"
+      return 1 ;;
+    (*)
+      if [ $((http_port)) -lt 1024 ] || [ $((http_port)) -gt 65535 ]; then
+        echo "HTTP port '$http_port' is outside of valid range [1024-65535]"
+        return 1
+      fi ;;
+  esac
+  
+  # ok
+  set_http_port "$http_port"
+  set_previous_http_port "$http_port"
+  snapctl restart tang
+}
+handle_port_config

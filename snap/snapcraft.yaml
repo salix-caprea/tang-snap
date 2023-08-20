@@ -1,6 +1,6 @@
 name: tang
 base: core22
-version: '14-0.1'
+version: '14-0.2'
 summary: Tang binding daemon
 license: GPL-3.0-or-later
 description: |
@@ -70,9 +70,9 @@ apps:
       - bin/set-perms
     environment:
       # TODO: use configuration (see https://snapcraft.io/docs/adding-snap-configuration)
-      HTTP_PORT: 8080
       JWK_DIR: $SNAP_COMMON/db
     command: bin/tangd-wrapper
+    restart-delay: 10s
     plugs:
       - network
       - network-bind

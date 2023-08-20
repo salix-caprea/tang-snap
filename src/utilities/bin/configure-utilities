@@ -16,8 +16,31 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-. "$SNAP/bin/configure-utilities"
+DEFAULT_HTTP_PORT="8080"
 
-export HTTP_PORT="$(get_http_port)"
+get_http_port() {
+  port="$(snapctl get ports.http)"
+  if [ -z "$port" ]; then
+    port="$DEFAULT_HTTP_PORT"
+    set_http_port $port
+    set_previous_http_port $port
+  fi
+  echo "$port"
+}
 
-setpriv --clear-groups --reuid snap_daemon --regid snap_daemon -- $SNAP/usr/libexec/tangd -p $HTTP_PORT -l $JWK_DIR
+set_http_port() {
+  snapctl set ports.http="$1"
+}
+
+get_previous_http_port() {
+  snapctl get private.ports.http
+}
+
+set_previous_http_port() {
+  snapctl set private.ports.http="$1"
+}
+
+has_http_port_changed() {
+  [ "$(get_http_port)" != "$(get_previous_http_port)" ]
+}
+

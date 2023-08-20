@@ -47,3 +47,13 @@ curl 127.0.0.1:8080/adv
 ```
 This command should return a response with a set of initial public keys. See upstream documentation for API details.
 
+## Configuration
+
+The following options are supported:
+* `ports.http` - HTTP server port in the range of \[1024, 65535\]
+
+Example:
+```
+sudo snap set tang ports.http=8001
+```
+
