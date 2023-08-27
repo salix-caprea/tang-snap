@@ -62,7 +62,7 @@ parts:
     build-snaps: []
     override-build: |
       craftctl default
-      meson test
+      meson test --print-errorlogs
     stage-packages:
       - jose
       - libhttp-parser2.9
