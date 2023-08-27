@@ -1,7 +1,8 @@
 name: tang
+title: Tang
 base: core22
 version: '14-0.2'
-summary: Tang binding daemon
+summary: Tang is a server for binding data to network presence
 license: GPL-3.0-or-later
 description: |
   Tang is a server for binding data to network presence.
@@ -14,9 +15,15 @@ contact: https://github.com/salix-caprea
 issues: https://github.com/salix-caprea/tang-snap/issues
 source-code: https://github.com/salix-caprea/tang-snap
 assumes: [snapd2.45,common-data-dir,snap-env,command-chain]
-
+architectures:
+  - build-on: [amd64]
+    build-for: [amd64]
+  - build-on: [armhf]
+    build-for: [armhf]
+  - build-on: [arm64]
+    build-for: [arm64]
 grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+confinement: strict
 
 system-usernames:
   snap_daemon: shared
